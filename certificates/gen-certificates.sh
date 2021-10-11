@@ -109,6 +109,7 @@ cfssl gencert \
   "${CFG_PATH}/kubernetes-csr.json" \
 | cfssljson -bare kubernetes
 
+# service account certificate
 cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
@@ -116,6 +117,7 @@ cfssl gencert \
   -profile=kubernetes \
   "${CFG_PATH}/service-account-csr.json" | cfssljson -bare service-account
 
+# distribute the worker certificates
 WORKER_INSTANCE_IDS=$(
   aws ec2 describe-instances \
     --filters Name=tag:Role,Values=worker Name=instance-state-name,Values=running \
@@ -129,6 +131,7 @@ for instance in ${WORKER_INSTANCE_IDS}; do
     : $((i+=1))
 done
 
+# distribute the controller certificates
 CONTROLLER_INSTANCE_IDS=$(
   aws ec2 describe-instances \
     --filters Name=tag:Role,Values=controller Name=instance-state-name,Values=running \
@@ -136,12 +139,10 @@ CONTROLLER_INSTANCE_IDS=$(
     --out text
 )
 
-i=0
 for instance in ${CONTROLLER_INSTANCE_IDS}; do
     scp \
       ca.pem ca-key.pem \
       kubernetes.pem kubernetes-key.pem \
       service-account.pem service-account-key.pem \
       "ec2-user@${instance}":~/
-    : $((i+=1))
 done
