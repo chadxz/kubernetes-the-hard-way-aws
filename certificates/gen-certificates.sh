@@ -120,7 +120,8 @@ cfssl gencert \
 # distribute the worker certificates
 WORKER_INSTANCE_IDS=$(
   aws ec2 describe-instances \
-    --filters Name=tag:Role,Values=worker Name=instance-state-name,Values=running \
+    --filters Name=tag:Role,Values=worker \
+              Name=instance-state-name,Values=running \
     --query 'Reservations[*].Instances[*].[InstanceId]' \
     --out text
 )
@@ -134,7 +135,8 @@ done
 # distribute the controller certificates
 CONTROLLER_INSTANCE_IDS=$(
   aws ec2 describe-instances \
-    --filters Name=tag:Role,Values=controller Name=instance-state-name,Values=running \
+    --filters Name=tag:Role,Values=controller \
+              Name=instance-state-name,Values=running \
     --query 'Reservations[*].Instances[*].[InstanceId]' \
     --out text
 )
