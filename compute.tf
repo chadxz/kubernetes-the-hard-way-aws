@@ -1,0 +1,102 @@
+data "local_file" "public_key" {
+  filename = pathexpand("~/.ssh/id_rsa.pub")
+}
+
+data "aws_iam_policy_document" "instance_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "k8s_instance_role" {
+  name               = "K8sInstanceRole"
+  assume_role_policy = data.aws_iam_policy_document.instance_assume_role_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_attachment" {
+  role       = aws_iam_role.k8s_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "k8s_instance_policy" {
+  name = "K8sInstanceRole"
+  role = aws_iam_role.k8s_instance_role.name
+}
+
+resource "aws_network_interface" "controller_interfaces" {
+  count       = local.instance_count.controllers
+  subnet_id   = aws_subnet.control_plane[0].id
+  private_ips = [cidrhost(aws_subnet.control_plane[0].cidr_block, 10 + count.index)]
+  security_groups = [
+    aws_security_group.in_local.id,
+    aws_security_group.out_all.id,
+    aws_security_group.in_kubectl.id
+  ]
+  tags = {
+    Name        = "${local.project_name} control${count.index} adapter"
+    ForInstance = "control-${count.index}"
+  }
+}
+
+resource "aws_key_pair" "ssh_key" {
+  public_key = data.local_file.public_key.content
+  key_name = "${local.project_name}-key"
+}
+
+resource "aws_instance" "controllers" {
+  for_each = { for interface in aws_network_interface.controller_interfaces : interface.tags.Name => interface }
+
+  ami                  = local.ami_id
+  instance_type        = "t2.micro"
+  iam_instance_profile = aws_iam_instance_profile.k8s_instance_policy.name
+  key_name = aws_key_pair.ssh_key.key_name
+
+  network_interface {
+    device_index         = 0
+    network_interface_id = each.value.id
+  }
+  tags = {
+    Name = each.value.tags.ForInstance
+    Role = "controller" # used to identify these instances for certificate copy
+  }
+}
+
+
+resource "aws_network_interface" "worker_interfaces" {
+  count       = local.instance_count.workers
+  subnet_id   = aws_subnet.control_plane[0].id
+  private_ips = [cidrhost(aws_subnet.control_plane[0].cidr_block, 20 + count.index)]
+  security_groups = [
+    aws_security_group.in_local.id,
+    aws_security_group.out_all.id,
+    aws_security_group.in_kubectl.id
+  ]
+
+  tags = {
+    Name        = "${local.project_name} worker${count.index} interface"
+    ForInstance = "worker-${count.index}"
+  }
+}
+
+resource "aws_instance" "workers" {
+  for_each = { for interface in aws_network_interface.worker_interfaces : interface.tags.Name => interface }
+
+  ami                  = local.ami_id
+  instance_type        = "t2.micro"
+  iam_instance_profile = aws_iam_instance_profile.k8s_instance_policy.name
+  key_name = aws_key_pair.ssh_key.key_name
+
+  network_interface {
+    device_index         = 0
+    network_interface_id = each.value.id
+  }
+  tags = {
+    Name = each.value.tags.ForInstance
+    Role = "worker" # used to identify these instances for certificate copy
+  }
+}
