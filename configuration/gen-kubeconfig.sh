@@ -105,8 +105,21 @@ kubectl config set-context default \
 
 kubectl config use-context default --kubeconfig=admin.kubeconfig
 
+cat > encryption-config.yaml <<EOF
+kind: EncryptionConfig
+apiVersion: v1
+resources:
+  - resources:
+      - secrets
+    providers:
+      - aescbc:
+          keys:
+            - name: key1
+              secret: $(head -c 32 /dev/urandom | base64)
+      - identity: {}
+EOF
 
-# distribute the worker certificates
+# distribute the worker configurations
 WORKER_INSTANCE_IDS=$(
   aws ec2 describe-instances \
     --filters Name=tag:Role,Values=worker \
@@ -124,7 +137,7 @@ for instance in ${WORKER_INSTANCE_IDS}; do
     : $((i+=1))
 done
 
-# distribute the controller certificates
+# distribute the controller configurations
 CONTROLLER_INSTANCE_IDS=$(
   aws ec2 describe-instances \
     --filters Name=tag:Role,Values=controller \
@@ -138,5 +151,6 @@ for instance in ${CONTROLLER_INSTANCE_IDS}; do
       admin.kubeconfig \
       kube-controller-manager.kubeconfig \
       kube-scheduler.kubeconfig \
+      encryption-config.yaml \
       "ec2-user@${instance}":~/
 done

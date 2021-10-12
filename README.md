@@ -3,6 +3,18 @@
 Following [kubernetes-the-hard-way](https://github.com/kelseyhightower/kubernetes-the-hard-way) but
 on AWS instead of GCP. Learning Terraform in the process.
 
+## Provisioning Steps (so far)
+* install Docker for Mac, awscli, cfssl, awscli ssm plugin, terraform
+* setup awscli profile
+* setup SSH ProxyCommand for ssm
+* `tf apply`
+* cd configuration
+* `./deploy-certificates.sh`
+* `./deploy-configuration.sh`
+* ...more to come
+
+## Notes from each section
+
 ### tools and environment
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/02-client-tools.md
 * `brew install awscli` and setup default profile and credentials
@@ -34,15 +46,23 @@ I also performed the following:
   is done using IAM instead of interface security groups or subnet network access control lists.
 * SSH/SCP via SSM requires you to setup a ProxyCommand in your SSH config. See https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html
 
-## Provisioning a CA and Generating TLS Certificates
+### Provisioning a CA and Generating TLS Certificates
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/04-certificate-authority.md
 * All the commands used for this, and sending them to the corresponding hosts, are in the script
-  [certificates/gen-certificates.sh](configuration/gen-certificates.sh)
+  [configuration/gen-certificates.sh](configuration/gen-certificates.sh)
   * This shell script would be better as a Makefile, so it doesn't constantly regenerate the certificates
     over and over. Can revisit that if need be. Using `scp` to copy the certificates would be better
     as an Ansible script as well.
 
-## Generating Kubernetes Configuration Files for Authentication
+### Generating Kubernetes Configuration Files for Authentication
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/05-kubernetes-configuration-files.md
 * I setup two elbv2 instances: one external, one internal. I pointed all the
   worker node config files at the internal load balancer to prevent hairpin traffic.
+* configuration for this section is stored in [configuration/gen-kubeconfig.sh](configuration/gen-kubeconfig.sh)
+
+### Generating the Data Encryption Config and Key
+* https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/06-data-encryption-keys.md
+* dumped this config into the gen-kubeconfig.sh script.
+
+### Bootstrapping the etcd Cluster
+* https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/07-bootstrapping-etcd.md
