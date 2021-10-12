@@ -1,5 +1,5 @@
 #!/bin/bash
-CFG_PATH=$(pwd)/configuration
+CFG_PATH=$(pwd)/cfssl
 
 # CA certificate and private key
 cfssl gencert -initca "${CFG_PATH}/ca-csr.json" | cfssljson -bare ca

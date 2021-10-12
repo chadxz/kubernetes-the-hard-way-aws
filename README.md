@@ -36,7 +36,11 @@ I also performed the following:
 ## Provisioning a CA and Generating TLS Certificates
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/04-certificate-authority.md
 * All the commands used for this, and sending them to the corresponding hosts, are in the script
-  [certificates/gen-certificates.sh](certificates/gen-certificates.sh)
+  [certificates/gen-certificates.sh](configuration/gen-certificates.sh)
   * This shell script would be better as a Makefile, so it doesn't constantly regenerate the certificates
     over and over. Can revisit that if need be. Using `scp` to copy the certificates would be better
     as an Ansible script as well.
+
+## Generating Kubernetes Configuration Files for Authentication
+* https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/05-kubernetes-configuration-files.md
+* 

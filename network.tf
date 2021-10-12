@@ -98,17 +98,3 @@ resource "aws_security_group" "out_all" {
     Name = "${local.project_name} out_all"
   }
 }
-
-resource "aws_lb" "external" {
-  name = "${local.project_name}-external"
-  internal = false
-  load_balancer_type = "application"
-  subnets = aws_subnet.aws_resources[*].id
-}
-
-resource "aws_lb" "internal" {
-  name = "${local.project_name}-internal"
-  internal = true
-  load_balancer_type = "application"
-  subnets = aws_subnet.aws_resources[*].id
-}
