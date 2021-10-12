@@ -1,0 +1,10 @@
+# ansible provisioning playbook for kubernetes controller
+---
+- name: Provision Kubernetes Controller
+  hosts: default
+  become: true
+  roles:
+    - apt-transport-https
+    - apt-get-update
+    - pip
+    - docker

@@ -1,0 +1,51 @@
+---
+- name: Download etcd
+  get_url:
+    url: '{{ etcd_release_url }}'
+    dest: /src/{{ etcd_release_filename }}
+    mode: 0644
+    checksum: sha256:{{ etcd_release_sha256sum }}
+
+- name: Extract etcd release tarball
+  unarchive:
+    src: /src/{{ etcd_release_filename }}
+    dest: /src/{{ etcd_release_extract_dir }}
+
+- name: Link etcd binaries into path
+  file:
+    src: /src/{{ etcd_release_extract_dir }}/{{ item }}
+    dest: /usr/local/bin/{{ item }}
+    state: link
+  with_items:
+    - etcd
+    - etcdctl
+
+- name: Create data directory
+  file:
+    path: /var/lib/etcd
+    state: directory
+    mode: 0700
+
+- name: Create configuration directory
+  file:
+    path: /etc/etcd
+    state: directory
+    mode: 0755
+
+- name: Copy certificates into configuration directory
+  copy:
+    src: configuration/{{ item }}
+    dest: /etc/etcd/{{ item }}
+    mode: 0644
+  with_items:
+    - ca.pem
+    - kubernetes-key.pem
+    - kubernetes.pem
+
+# copy user data script to /var/lib/cloud/scripts/per-instance/
+## sets ETCD_NAME in template to $(hostname -s)
+## sets INTERNAL_IP in template to result of AWS metadata private_ip lookup
+
+# install systemd service definition
+
+# enable service

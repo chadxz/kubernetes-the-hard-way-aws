@@ -1,0 +1,43 @@
+---
+- name: apt-key install docker key
+  apt_key:
+    id: 8D81803C0EBFCD88
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Make configuration directory for Docker
+  file: path="/etc/docker" owner=root group=root mode=0770 state=directory
+
+- name: Create daemon.json configuration file using journald
+  copy: >
+    src=daemon.json dest=/etc/docker/daemon.json
+    owner=root group=root mode=0644
+
+- name: apt-add-repo https://download.docker.com/linux/ubuntu
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    filename: docker
+
+# prevent unintentional docker upgrades
+- name: cp docker-engine /etc/apt/preferences.d/
+  copy:
+    dest: /etc/apt/preferences.d/docker-engine
+    content: |
+      Package: docker-ce
+      Pin: version {{ docker_version }}
+      Pin-Priority: 1002
+
+      Package: docker-ce-cli
+      Pin: version {{ docker_version }}
+      Pin-Priority: 1002
+
+# install the pinned version of docker
+- name: apt-get install docker-ce
+  apt:
+    name:
+      - docker-ce={{ docker_version }}
+      - docker-ce-cli={{ docker_version }}
+
+- name: pip install docker
+  pip: name=docker version={{ docker_py_version }}

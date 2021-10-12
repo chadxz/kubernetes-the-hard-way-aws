@@ -1,0 +1,3 @@
+---
+- name: Install apt-transport-https to support https repository endpoints
+  apt: name=apt-transport-https

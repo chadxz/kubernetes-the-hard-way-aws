@@ -1,0 +1,8 @@
+---
+- tags: pip
+  block:
+    - name: apt-get install pip3
+      apt: name=python3-pip
+
+    - name: cp pip.conf /etc/pip.conf
+      copy: src=pip.conf dest=/etc/pip.conf mode=0644

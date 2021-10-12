@@ -1,0 +1,6 @@
+---
+- name: apt-get update
+  apt: update_cache=yes
+  # APT cache updates actually aren't all that meaningful, so ignore them
+  # in terms of change reporting
+  changed_when: false

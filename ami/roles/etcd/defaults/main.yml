@@ -1,0 +1,6 @@
+---
+etcd_release_version: v3.4.17
+etcd_release_extract_dir: etcd-{{ etcd_release_version }}-linux-amd64
+etcd_release_filename: etcd-{{ etcd_release_version }}-linux-amd64.tar.gz
+etcd_release_url: https://github.com/etcd-io/etcd/releases/download/{{ etcd_release_version }}/{{ etcd_release_filename }}
+etcd_release_sha256sum: 10df17c03fd2f0b3cc3354f73d0b9573af2d3582eff3b210e43e380417b4c644
