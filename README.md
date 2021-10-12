@@ -43,4 +43,5 @@ I also performed the following:
 
 ## Generating Kubernetes Configuration Files for Authentication
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/05-kubernetes-configuration-files.md
-* 
+* I setup two elbv2 instances: one external, one internal. I pointed all the
+  worker node config files at the internal load balancer to prevent hairpin traffic.
