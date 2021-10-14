@@ -1,8 +1,9 @@
 ---
-- tags: pip
-  block:
-    - name: apt-get install pip3
-      apt: name=python3-pip
+  - name: apt-get install pip3
+    apt: name=python3-pip
+    register: apt_action
+    retries: 100
+    until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
 
-    - name: cp pip.conf /etc/pip.conf
-      copy: src=pip.conf dest=/etc/pip.conf mode=0644
+  - name: cp pip.conf /etc/pip.conf
+    copy: src=pip.conf dest=/etc/pip.conf mode=0644

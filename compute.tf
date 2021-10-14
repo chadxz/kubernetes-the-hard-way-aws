@@ -39,7 +39,7 @@ resource "aws_network_interface" "worker_interfaces" {
   ]
 
   tags = {
-    Name        = "${local.project_name} worker${count.index} interface"
+    Name        = "${local.project_name} worker-${count.index} interface"
     ForInstance = "worker-${count.index}"
   }
 }
@@ -54,8 +54,8 @@ resource "aws_network_interface" "controller_interfaces" {
     aws_security_group.in_kubectl.id
   ]
   tags = {
-    Name        = "${local.project_name} control${count.index} adapter"
-    ForInstance = "control-${count.index}"
+    Name        = "${local.project_name} controller-${count.index} adapter"
+    ForInstance = "controller-${count.index}"
   }
 }
 

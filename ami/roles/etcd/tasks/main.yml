@@ -1,4 +1,13 @@
 ---
+- name: create directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: 0755
+  with_items:
+    - /src
+    - /src/etcd-v3.4.17-linux-amd64
+
 - name: Download etcd
   get_url:
     url: '{{ etcd_release_url }}'
@@ -8,8 +17,10 @@
 
 - name: Extract etcd release tarball
   unarchive:
+    remote_src: yes
     src: /src/{{ etcd_release_filename }}
     dest: /src/{{ etcd_release_extract_dir }}
+    extra_opts: [--strip-components=1]
 
 - name: Link etcd binaries into path
   file:
@@ -42,10 +53,24 @@
     - kubernetes-key.pem
     - kubernetes.pem
 
-# copy user data script to /var/lib/cloud/scripts/per-instance/
-## sets ETCD_NAME in template to $(hostname -s)
-## sets INTERNAL_IP in template to result of AWS metadata private_ip lookup
+- name: Install etcd service configuration
+  copy:
+    src: etcd.service
+    dest: /etc/systemd/system/etcd.service
+    mode: 0644
 
-# install systemd service definition
+- name: Enable etcd service
+  systemd:
+    name: etcd
+    daemon_reload: yes
+    enabled: yes
+    state: stopped
 
-# enable service
+- name: Install etcd service configuration into cloud-init
+  copy:
+    src: etcd-bootstrap.cfg
+    dest: /etc/cloud/cloud.cfg.d/etcd-bootstrap.cfg
+    mode: 0644
+
+- name: Install j2cli for execution of etcd-bootstrap bootcmd
+  pip: name=j2cli

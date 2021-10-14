@@ -44,7 +44,7 @@ I also performed the following:
 * One main point here is I didn't expose SSH ports, and am instead using AWS SSM for access.
   An SSH key must still be provisioned to the server though to use SSH/SCP tooling, but the access control
   is done using IAM instead of interface security groups or subnet network access control lists.
-* SSH/SCP via SSM requires you to setup a ProxyCommand in your SSH config. See https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html
+* SSH/SCP via SSM requires you to set up a ProxyCommand in your SSH config. See https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html
 
 ### Provisioning a CA and Generating TLS Certificates
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/04-certificate-authority.md
@@ -66,3 +66,5 @@ I also performed the following:
 
 ### Bootstrapping the etcd Cluster
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/07-bootstrapping-etcd.md
+* https://codeinthehole.com/tips/avoiding-package-lockout-in-ubuntu-1804/
+* 
