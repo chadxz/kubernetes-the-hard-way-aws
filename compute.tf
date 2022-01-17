@@ -1,5 +1,5 @@
 data "local_file" "public_key" {
-  filename = pathexpand("~/.ssh/id_rsa.pub")
+  filename = pathexpand("~/.ssh/id_ed25519.pub")
 }
 
 data "aws_iam_policy_document" "instance_assume_role_policy" {
@@ -30,8 +30,8 @@ resource "aws_iam_instance_profile" "k8s_instance_policy" {
 
 resource "aws_network_interface" "worker_interfaces" {
   count       = local.instance_count.workers
-  subnet_id   = aws_subnet.control_plane[0].id
-  private_ips = [cidrhost(aws_subnet.control_plane[0].cidr_block, 20 + count.index)]
+  subnet_id   = aws_subnet.aws_resources[count.index % length(aws_subnet.aws_resources)].id
+  private_ips = [cidrhost(aws_subnet.aws_resources[count.index % length(aws_subnet.aws_resources)].cidr_block, 20 + count.index)]
   security_groups = [
     aws_security_group.in_local.id,
     aws_security_group.out_all.id,
@@ -46,8 +46,8 @@ resource "aws_network_interface" "worker_interfaces" {
 
 resource "aws_network_interface" "controller_interfaces" {
   count       = local.instance_count.controllers
-  subnet_id   = aws_subnet.control_plane[0].id
-  private_ips = [cidrhost(aws_subnet.control_plane[0].cidr_block, 10 + count.index)]
+  subnet_id   = aws_subnet.control_plane[count.index % length(aws_subnet.control_plane)].id
+  private_ips = [cidrhost(aws_subnet.control_plane[count.index % length(aws_subnet.control_plane)].cidr_block, 10 + count.index)]
   security_groups = [
     aws_security_group.in_local.id,
     aws_security_group.out_all.id,
