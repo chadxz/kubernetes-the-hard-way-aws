@@ -17,9 +17,11 @@ on AWS instead of GCP. Learning Terraform in the process.
 
 ### tools and environment
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/02-client-tools.md
-* `brew install awscli` and setup default profile and credentials
+* `brew install awscli` and setup default profile and credentials (`aws configure`)
 * install Docker for Mac, which includes `kubectl` cli app
 * `brew install cfssl`
+* `brew install tflint`
+* `brew install tfswitch`
 
 ### network and compute
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/03-compute-resources.md
