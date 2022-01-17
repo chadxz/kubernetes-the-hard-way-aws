@@ -21,7 +21,7 @@ provider "aws" {
 }
 
 locals {
-  ami_id       = "ami-001e76b3918fba080" # Amazon Linux 2022 AMI 2022.0.20211222.0 x86_64 HVM kernel-5.10
+  ami_id       = "ami-08e4e35cccc6189f4" # amzn2-ami-kernel-5.10-hvm-2.0.20211223.0-x86_64-gp2
   project_name = "k8s"
   instance_count = {
     controllers = 3

@@ -7,7 +7,8 @@ on AWS instead of GCP. Learning Terraform in the process.
 * install Docker for Mac, awscli, cfssl, awscli ssm plugin, terraform
 * setup awscli profile
 * setup SSH ProxyCommand for ssm
-* `tf apply`
+* `cd remote-state && tfswitch && terraform init && terraform apply`
+* `tfswitch && terraform init && terraform apply`
 * cd configuration
 * `./deploy-certificates.sh`
 * `./deploy-configuration.sh`
@@ -22,6 +23,7 @@ on AWS instead of GCP. Learning Terraform in the process.
 * `brew install cfssl`
 * `brew install tflint`
 * `brew install tfswitch`
+* Install AWS CLI SSM plugin following the instructions here: https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html#install-plugin-macos
 
 ### network and compute
 * https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/03-compute-resources.md
