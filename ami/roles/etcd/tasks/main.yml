@@ -6,7 +6,7 @@
     mode: 0755
   with_items:
     - /src
-    - /src/etcd-v3.4.17-linux-amd64
+    - /src/{{ etcd_release_extract_dir }}
 
 - name: Download etcd
   get_url:
