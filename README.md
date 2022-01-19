@@ -4,7 +4,7 @@ Following [kubernetes-the-hard-way](https://github.com/kelseyhightower/kubernete
 on AWS instead of GCP. Learning Terraform in the process.
 
 ## Provisioning Steps (so far)
-* install Docker for Mac, awscli, cfssl, awscli ssm plugin, terraform
+* install Docker for Mac, awscli, cfssl, awscli ssm plugin, terraform, ansible
 * setup awscli profile
 * setup SSH ProxyCommand for ssm
 * `cd remote-state && tfswitch && terraform init && terraform apply`
