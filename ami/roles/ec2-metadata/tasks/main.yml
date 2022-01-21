@@ -1,6 +1,0 @@
----
-- name: download ec2-metadata
-  get_url:
-    url: https://s3.amazonaws.com/ec2metadata/ec2-metadata
-    dest: /usr/local/bin/ec2-metadata
-    mode: 0755

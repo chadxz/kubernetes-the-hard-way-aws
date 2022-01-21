@@ -1,8 +1,0 @@
----
-- name: Common Provisioning
-  import_playbook: common-playbook.yml
-
-- name: Provision Kubernetes Worker
-  hosts: default
-  become: true
-  roles: []

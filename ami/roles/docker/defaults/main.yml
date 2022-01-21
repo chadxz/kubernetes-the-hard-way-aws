@@ -1,5 +1,0 @@
-# Docker upgrades can be tricky. Be sure to read the release notes and
-# upgrade notes to see if we need to do anything special
-#  - https://docs.docker.com/engine/release-notes/
-docker_version: '5:20.10.9*'
-docker_py_version: '5.0.3'

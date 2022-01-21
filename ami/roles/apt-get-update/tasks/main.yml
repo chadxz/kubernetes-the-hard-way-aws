@@ -1,9 +1,0 @@
----
-- name: apt-get update
-  apt: update_cache=yes
-  # APT cache updates actually aren't all that meaningful, so ignore them
-  # in terms of change reporting
-  changed_when: false
-  register: apt_action
-  retries: 100
-  until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)

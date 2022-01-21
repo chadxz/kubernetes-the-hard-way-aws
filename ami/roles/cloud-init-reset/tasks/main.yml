@@ -1,3 +1,0 @@
----
-- name: reset cloud-init
-  command: cloud-init clean -s -l

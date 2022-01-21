@@ -1,9 +1,0 @@
----
-- name: Common Provisioning
-  import_playbook: common-playbook.yml
-
-- name: Provision Kubernetes Controller
-  hosts: default
-  become: true
-  roles:
-    - etcd
